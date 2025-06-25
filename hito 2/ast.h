@@ -55,6 +55,10 @@ typedef struct AST {
             struct AST* next;
         } stmt_list;
 
+        struct {
+            struct AST* expr;
+        } print;
+
         int bool_val;
     } data;
 
@@ -76,6 +80,7 @@ AST* ast_create_stmt_list(AST* first, AST* next);
 AST* ast_create_expr_stmt(AST* expr);
 AST* ast_create_bool_node(int val);
 AST* ast_append_stmt(AST* list, AST* stmt);
+
 
 // Auxiliares
 void ast_destroy(AST* node);

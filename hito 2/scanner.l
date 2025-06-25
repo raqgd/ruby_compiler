@@ -48,13 +48,12 @@ int yywrap(void) {
     fprintf(salida, "KEYWORD: %s, LINEA: %d\n", yytext, yylineno);
     return ELSE;
 }
+"then"        { fprintf(salida, "KEYWORD: %s, LINEA: %d\n", yytext, yylineno); return THEN; }
+"do"          { fprintf(salida, "KEYWORD: %s, LINEA: %d\n", yytext, yylineno); return DO; }
+"end" { fprintf(salida, "KEYWORD: %s, LINEA: %d\n", yytext, yylineno); return END; }
 "while"               { 
     fprintf(salida, "KEYWORD: %s, LINEA: %d\n", yytext, yylineno);
     return WHILE;
-}
-"print"               { 
-    fprintf(salida, "FUNCTION: %s, LINEA: %d\n", yytext, yylineno);
-    return PRINT;
 }
 
 "def"                 { 
@@ -168,7 +167,8 @@ int yywrap(void) {
     return NUM;
 }
 
-[ \t\n]+              { /* Ignorar espacios en blanco */ }
+[ \t\r]+     ; 
+\n           { return NEWLINE; }
 
 .                     { 
     fprintf(salida, "CARACTER NO RECONOCIDO: %s, LINEA: %d\n", yytext, yylineno);

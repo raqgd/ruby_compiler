@@ -46,21 +46,24 @@
      IF = 263,
      ELSE = 264,
      WHILE = 265,
-     PRINT = 266,
-     DEF = 267,
-     RETURN = 268,
-     EQ = 269,
-     NEQ = 270,
-     LT = 271,
-     GT = 272,
-     LE = 273,
-     GE = 274,
-     PLUS = 275,
-     MINUS = 276,
-     MUL = 277,
-     DIV = 278,
-     ASSIGN = 279,
-     LOWER_THAN_ELSE = 280
+     DEF = 266,
+     RETURN = 267,
+     THEN = 268,
+     DO = 269,
+     END = 270,
+     EQ = 271,
+     NEQ = 272,
+     LT = 273,
+     GT = 274,
+     LE = 275,
+     GE = 276,
+     PLUS = 277,
+     MINUS = 278,
+     MUL = 279,
+     DIV = 280,
+     ASSIGN = 281,
+     NEWLINE = 282,
+     LOWER_THAN_ELSE = 283
    };
 #endif
 
@@ -82,7 +85,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 86 "parser.tab.h"
+#line 89 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

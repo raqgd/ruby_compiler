@@ -23,7 +23,7 @@ AST* ast_create_float_node(float v) {
     return n;
 }
 
-AST* ast_create_string_node(const char* s) {
+AST* ast_create_str_node(const char* s) {
     AST* n = malloc(sizeof(AST));
     n->kind = NODE_STRING;
     n->type = TYPE_STRING;
@@ -175,6 +175,5 @@ void ast_destroy(AST* node) {
             ast_destroy(node->data.stmt_list.next);
             break;
     }
-
     free(node);
 }
