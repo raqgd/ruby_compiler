@@ -393,10 +393,10 @@ struct yy_trans_info
 static yyconst flex_int16_t yy_accept[88] =
     {   0,
         0,    0,    0,    0,   38,   36,   34,   35,   36,   36,
-        7,   36,   25,   23,   24,   26,   33,   21,   27,   22,
+        7,   36,   25,   23,   24,   26,   33,   21,   31,   22,
        20,   20,   20,   20,   20,   20,   20,   20,    3,   37,
-       34,   29,    0,   18,    0,    7,    0,   19,    0,    0,
-       33,   30,   28,    0,   31,   20,   20,   11,   20,   20,
+       34,   28,    0,   18,    0,    7,    0,   19,    0,    0,
+       33,   29,   27,    0,   30,   20,   20,   11,   20,   20,
        20,    8,   20,   20,   20,   20,    3,    4,    0,   32,
         0,   14,   20,   12,   20,   20,   20,   20,   20,    5,
         0,    0,    9,   20,   20,   10,   16,   20,    6,    2,
@@ -1048,40 +1048,40 @@ case 27:
 YY_RULE_SETUP
 #line 133 "scanner.l"
 { 
-    fprintf(salida, "ASSIGN: %s, LINEA: %d\n", yytext, yylineno);
-    return ASSIGN;
+    fprintf(salida, "OPERATOR_EQ: %s, LINEA: %d\n", yytext, yylineno);
+    return EQ;
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 138 "scanner.l"
 { 
-    fprintf(salida, "OPERATOR_EQ: %s, LINEA: %d\n", yytext, yylineno);
-    return EQ;
+    fprintf(salida, "OPERATOR_NEQ: %s, LINEA: %d\n", yytext, yylineno);
+    return NEQ;
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 143 "scanner.l"
 { 
-    fprintf(salida, "OPERATOR_NEQ: %s, LINEA: %d\n", yytext, yylineno);
-    return NEQ;
+    fprintf(salida, "OPERATOR_LE: %s, LINEA: %d\n", yytext, yylineno);
+    return LE;
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 148 "scanner.l"
 { 
-    fprintf(salida, "OPERATOR_LE: %s, LINEA: %d\n", yytext, yylineno);
-    return LE;
+    fprintf(salida, "OPERATOR_GE: %s, LINEA: %d\n", yytext, yylineno);
+    return GE;
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 153 "scanner.l"
 { 
-    fprintf(salida, "OPERATOR_GE: %s, LINEA: %d\n", yytext, yylineno);
-    return GE;
+    fprintf(salida, "ASSIGN: %s, LINEA: %d\n", yytext, yylineno);
+    return ASSIGN;
 }
 	YY_BREAK
 case 32:
@@ -1111,7 +1111,7 @@ case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
 #line 171 "scanner.l"
-{ return NEWLINE; }
+{ yylineno++; return NEWLINE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP

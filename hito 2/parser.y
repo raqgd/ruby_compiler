@@ -58,9 +58,10 @@ program:
 ;
 
 stmts:
-    /* vacío */ { $$ = NULL; }
-  | stmts stmt { $$ = ast_append_stmt($1, $2); }
-  | stmt       { $$ = $1; }
+      /* vacío */             { $$ = NULL; }
+    | stmts stmt              { $$ = ast_append_stmt($1, $2); }
+    | stmt                    { $$ = $1; }
+    | stmts NEWLINE           { $$ = $1; }  // <- esta línea es nueva
 ;
 
 stmt:
@@ -114,8 +115,11 @@ identifier:
 
 %%
 
+extern int yylineno;
+extern char* yytext;
+
 void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr, "Error de sintaxis en la línea %d: %s (token: '%s')\n", yylineno, s, yytext);
 }
 
 int main() {

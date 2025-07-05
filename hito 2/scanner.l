@@ -130,11 +130,6 @@ int yywrap(void) {
     return DIV;
 }
 
-"="                   { 
-    fprintf(salida, "ASSIGN: %s, LINEA: %d\n", yytext, yylineno);
-    return ASSIGN;
-}
-
 "=="                  { 
     fprintf(salida, "OPERATOR_EQ: %s, LINEA: %d\n", yytext, yylineno);
     return EQ;
@@ -155,6 +150,11 @@ int yywrap(void) {
     return GE;
 }
 
+"="                   { 
+    fprintf(salida, "ASSIGN: %s, LINEA: %d\n", yytext, yylineno);
+    return ASSIGN;
+}
+
 [0-9]+\.[0-9]+        { 
     fprintf(salida, "FLOAT: %s, LINEA: %d\n", yytext, yylineno);
     yylval.flt = atof(yytext);
@@ -168,7 +168,7 @@ int yywrap(void) {
 }
 
 [ \t\r]+     ; 
-\n           { return NEWLINE; }
+\n { yylineno++; return NEWLINE; }
 
 .                     { 
     fprintf(salida, "CARACTER NO RECONOCIDO: %s, LINEA: %d\n", yytext, yylineno);
