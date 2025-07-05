@@ -30,7 +30,7 @@ int symtable_declare(const char *name, VarType type) {
 
     Symbol *s = malloc(sizeof(Symbol));
     if (!s) {
-        fprintf(stderr, "Error al reservar memoria para símbolo\n");
+        fprintf(stderr, "Error al reservar memoria para sÃ­mbolo\n");
         exit(EXIT_FAILURE);
     }
     s->name = strdup(name);

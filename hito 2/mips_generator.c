@@ -155,6 +155,71 @@ void mips_expr_result(int value) {
     fprintf(mips_output, "addu $sp, $sp, 4\n");
 }
 
+static int label_count = 0;
+
+static void generate_code(AST* node) {
+    if (!node) return;
+
+    switch (node->kind) {
+        case NODE_NUM:
+            mips_push_int(node->data.int_val);
+            break;
+
+        case NODE_FLOAT:
+            mips_push_float(node->data.float_val);  // esta función la crearemos más adelante
+            break;
+
+        case NODE_BOOL:
+            mips_push_int(node->data.bool_val);
+            break;
+
+        case NODE_STRING:
+            mips_push_string(node->data.str_val);
+            break;
+
+        case NODE_ID:
+            if (node->type == TYPE_FLOAT)
+                mips_use_var_float(node->data.str_val);  // esta función la crearemos más adelante
+            else
+                mips_use_var(node->data.str_val);
+            break;
+
+        case NODE_ASSIGN:
+            generate_code(node->data.assign.expr);
+            if (node->type == TYPE_FLOAT)
+                mips_assign_float(node->data.assign.id);  // esta función la crearemos más adelante
+            else
+                mips_assign(node->data.assign.id);
+            break;
+
+        default:
+            fprintf(stderr, "Error: nodo no implementado aún en generate_code\n");
+            break;
+    }
+}
+
 void generate_mips_from_ast(AST* root) {
-    // Implementación futura de generación MIPS desde el AST
+    generate_code(root);
+}
+
+void mips_push_float(float value) {
+    fprintf(mips_output, ".data\nfloat_const_%d: .float %f\n.text\n", float_const_count, value);
+    fprintf(mips_output, "l.s $f0, float_const_%d\n", float_const_count);
+    fprintf(mips_output, "subu $sp, $sp, 4\n"); // Reservar espacio
+    fprintf(mips_output, "s.s $f0, 0($sp)\n");  // Guardar valor
+    float_const_count++;
+}
+
+void mips_assign_float(const char* id) {
+    fprintf(mips_output, "l.s $f0, 0($sp)\n");
+    fprintf(mips_output, "la $t0, %s\n", id);
+    fprintf(mips_output, "s.s $f0, 0($t0)\n");
+    fprintf(mips_output, "addu $sp, $sp, 4\n");
+}
+
+void mips_use_var_float(const char* id) {
+    fprintf(mips_output, "la $t0, %s\n", id);
+    fprintf(mips_output, "l.s $f0, 0($t0)\n");
+    fprintf(mips_output, "subu $sp, $sp, 4\n");
+    fprintf(mips_output, "s.s $f0, 0($sp)\n");
 }

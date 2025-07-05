@@ -1,3 +1,5 @@
+%debug
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,6 +38,7 @@ int label_count = 0;
 %token PLUS MINUS MUL DIV
 %token ASSIGN
 %token NEWLINE
+%token END_OF_FILE
 
 /* ------------------ TIPOS PARA NO TERMINALES ------------------ */
 %type <node> program stmts stmt expr
@@ -52,27 +55,26 @@ int label_count = 0;
 %%
 
 program:
-    stmts {
+    stmts opt_newline END_OF_FILE {
         root = $1;
     }
 ;
 
 stmts:
-      /* vacío */             { $$ = NULL; }
-    | stmts stmt              { $$ = ast_append_stmt($1, $2); }
-    | stmt                    { $$ = $1; }
-    | stmts NEWLINE           { $$ = $1; }  // <- esta línea es nueva
+    /* vacío */ { $$ = NULL; }
+  | stmts stmt { $$ = ast_append_stmt($1, $2); }
+  | stmt       { $$ = $1; }
 ;
 
 stmt:
-    identifier ASSIGN expr NEWLINE {
+    identifier ASSIGN expr opt_newline {
         if (!symbol_exists($1)) {
             symtable_declare($1, $3->type);
         }
         $$ = ast_create_assign_node($1, $3);
         free($1);
     }
-  | expr NEWLINE {
+  | expr opt_newline {
         $$ = ast_create_expr_stmt($1);
     }
   | IF expr THEN stmts ELSE stmts END {
@@ -88,6 +90,7 @@ stmt:
 
 expr:
     NUM              { $$ = ast_create_num_node($1); }
+  | FLOAT            { $$ = ast_create_float_node($1); }
   | BOOL             { $$ = ast_create_bool_node($1); }
   | STRING           { $$ = ast_create_str_node($1); }
   | identifier       { $$ = ast_create_id_node($1); free($1); }
@@ -113,17 +116,21 @@ identifier:
     ID { $$ = $1; }
 ;
 
+opt_newline:
+    /* vacío */
+  | NEWLINE
+;
 %%
 
-extern int yylineno;
-extern char* yytext;
-
 void yyerror(const char *s) {
-    fprintf(stderr, "Error de sintaxis en la línea %d: %s (token: '%s')\n", yylineno, s, yytext);
+    fprintf(stderr, "Error: %s\n", s);
 }
 
 int main() {
     symtable_init();
+
+    extern int yydebug;
+    yydebug = 1;  // <---- activa trazas en tiempo de ejecución
 
     if (yyparse() == 0) {
         generate_mips_from_ast(root);

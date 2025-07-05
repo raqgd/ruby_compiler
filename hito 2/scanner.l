@@ -31,12 +31,16 @@ int yywrap(void) {
 <COMMENT>"=e"[^n]+     { /* Igual que arriba */ }
 <COMMENT>"=en"[^d]+    { /* Igual que arriba */ }
 
-<<EOF>>                { 
-                          if (unterminated_comment) {
-                              fprintf(stderr, "Error: comentario multilínea '=begin' no cerrado con '=end' al final del archivo (línea %d)\n", yylineno);
-                              exit(1);
-                          }
-                      }
+<<EOF>> {
+    if (unterminated_comment) {
+        fprintf(stderr, "Error: comentario multilínea '=begin' no cerrado con '=end' al final del archivo (línea %d)\n", yylineno);
+        exit(1);
+    }
+
+    fprintf(stderr, "TOKEN: END_OF_FILE alcanzado en línea %d\n", yylineno);
+    return END_OF_FILE;
+}
+
 
 "#".*                 { /* Ignorar comentarios de línea */ }
 
@@ -130,6 +134,11 @@ int yywrap(void) {
     return DIV;
 }
 
+"="                   { 
+    fprintf(salida, "ASSIGN: %s, LINEA: %d\n", yytext, yylineno);
+    return ASSIGN;
+}
+
 "=="                  { 
     fprintf(salida, "OPERATOR_EQ: %s, LINEA: %d\n", yytext, yylineno);
     return EQ;
@@ -150,11 +159,6 @@ int yywrap(void) {
     return GE;
 }
 
-"="                   { 
-    fprintf(salida, "ASSIGN: %s, LINEA: %d\n", yytext, yylineno);
-    return ASSIGN;
-}
-
 [0-9]+\.[0-9]+        { 
     fprintf(salida, "FLOAT: %s, LINEA: %d\n", yytext, yylineno);
     yylval.flt = atof(yytext);
@@ -168,7 +172,7 @@ int yywrap(void) {
 }
 
 [ \t\r]+     ; 
-\n { yylineno++; return NEWLINE; }
+\r?\n         { return NEWLINE; }
 
 .                     { 
     fprintf(salida, "CARACTER NO RECONOCIDO: %s, LINEA: %d\n", yytext, yylineno);
