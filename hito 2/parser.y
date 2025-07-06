@@ -9,6 +9,8 @@
 #include "sym_tab.h"
 #include "mips_generator.h"
 
+extern int yylineno;
+
 int yylex(void);
 void yyerror(const char *s);
 
@@ -57,6 +59,7 @@ int label_count = 0;
 program:
     stmts opt_newline END_OF_FILE {
         root = $1;
+        YYACCEPT;
     }
 ;
 
@@ -74,7 +77,7 @@ stmt:
         $$ = ast_create_assign_node($1, $3);
         free($1);
     }
-  | expr opt_newline {
+  | expr NEWLINE {
         $$ = ast_create_expr_stmt($1);
     }
   | IF expr THEN stmts ELSE stmts END {
@@ -94,7 +97,22 @@ expr:
   | BOOL             { $$ = ast_create_bool_node($1); }
   | STRING           { $$ = ast_create_str_node($1); }
   | identifier       { $$ = ast_create_id_node($1); free($1); }
-  | expr PLUS expr   { $$ = ast_create_binop_node(PLUS, $1, $3); }
+  | expr PLUS expr {
+        if ($1->type == TYPE_STRING && $3->type == TYPE_STRING) {
+            $$ = ast_create_binop_node(PLUS, $1, $3);
+            $$->type = TYPE_STRING;
+        } else if ($1->type == TYPE_INT && $3->type == TYPE_INT) {
+            $$ = ast_create_binop_node(PLUS, $1, $3);
+            $$->type = TYPE_INT;
+        } else if ($1->type == TYPE_FLOAT && $3->type == TYPE_FLOAT) {
+            $$ = ast_create_binop_node(PLUS, $1, $3);
+            $$->type = TYPE_FLOAT;
+        } else {
+            fprintf(stderr, "Error: operación '+' no válida entre tipos diferentes en línea %d\n", yylineno);
+            exit(1);
+        }
+    }
+
   | expr MINUS expr  { $$ = ast_create_binop_node(MINUS, $1, $3); }
   | expr MUL expr    { $$ = ast_create_binop_node(MUL, $1, $3); }
   | expr DIV expr    {
@@ -133,7 +151,9 @@ int main() {
     yydebug = 1;  // <---- activa trazas en tiempo de ejecución
 
     if (yyparse() == 0) {
+        init_mips();
         generate_mips_from_ast(root);
+        end_mips();
     }
 
     symtable_destroy();

@@ -63,7 +63,8 @@
      DIV = 280,
      ASSIGN = 281,
      NEWLINE = 282,
-     LOWER_THAN_ELSE = 283
+     END_OF_FILE = 283,
+     LOWER_THAN_ELSE = 284
    };
 #endif
 
@@ -74,7 +75,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1685 of yacc.c  */
-#line 19 "parser.y"
+#line 23 "parser.y"
 
     int integer;
     int boolean;
@@ -85,7 +86,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 89 "parser.tab.h"
+#line 90 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

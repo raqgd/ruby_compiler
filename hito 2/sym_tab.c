@@ -24,13 +24,27 @@ void symtable_destroy() {
     symbols = NULL;
 }
 
+void symtable_emit_declarations(FILE* out) {
+    Symbol* s = symbols;
+    while (s) {
+        if (s->type == TYPE_INT) {
+            fprintf(out, "%s: .word 0\n", s->name);
+        } else if (s->type == TYPE_FLOAT) {
+            fprintf(out, "%s: .float 0.0\n", s->name);
+        } else if (s->type == TYPE_STRING) {
+            fprintf(out, "%s: .space 256\n", s->name); // espacio para string
+        }
+        s = s->next;
+    }
+}
+
 int symtable_declare(const char *name, VarType type) {
     if (symtable_lookup(name) != TYPE_UNDEFINED)
         return 0;  // ya existe
 
     Symbol *s = malloc(sizeof(Symbol));
     if (!s) {
-        fprintf(stderr, "Error al reservar memoria para sÃ­mbolo\n");
+        fprintf(stderr, "Error al reservar memoria para símbolo\n");
         exit(EXIT_FAILURE);
     }
     s->name = strdup(name);
@@ -51,3 +65,4 @@ VarType symtable_lookup(const char *name) {
 int symbol_exists(const char *name) {
     return symtable_lookup(name) != TYPE_UNDEFINED;
 }
+

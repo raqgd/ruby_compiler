@@ -24,5 +24,6 @@ void symtable_destroy();
 int symtable_declare(const char *name, VarType type);
 VarType symtable_lookup(const char *name);
 int symbol_exists(const char *name);
+void symtable_emit_declarations(FILE* out);
 
 #endif

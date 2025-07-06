@@ -86,3 +86,5 @@ AST* ast_append_stmt(AST* list, AST* stmt);
 void ast_destroy(AST* node);
 void print_ast(AST* node, int level);
 int is_zero(AST* expr);
+
+#endif
